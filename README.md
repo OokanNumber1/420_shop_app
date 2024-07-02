@@ -14,9 +14,9 @@ This project is a starting point for a Flutter application.
 
 [Appetize line](https://appetize.io/app/6flxk3ri5dvs2zc42fgmy6esci?device=pixel8pro&osVersion=14.0)
 
-[APK link](submission/420Shop.apk)
+[APK link](https://drive.google.com/file/d/1_9Ltfmi5vIKzPiXFFujmstdJCnKOjRqT/view?usp=drivesdk)
 
-## Demo
+[Demo link](https://drive.google.com/file/d/1FpEz0wPgK5JdRiUb42JjcUu2Qd6eAb4y/view?usp=drivesdk)
 
 ## Screenshots
 ![productScreen](submission/productScreen.png)
