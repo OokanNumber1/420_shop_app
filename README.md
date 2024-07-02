@@ -17,9 +17,6 @@ This project is a starting point for a Flutter application.
 [APK link](submission/420Shop.apk)
 
 ## Demo
-![Demo video](submission/420Demo_117.mp4)
-
-<video src='submission/420Demo_117.mp4' width=180/>
 
 ## Screenshots
 ![productScreen](submission/productScreen.png)
