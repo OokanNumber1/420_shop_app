@@ -21,6 +21,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     notifier.addListener(() {
       setState(() {});
     });
+
     super.initState();
   }
 
@@ -34,9 +35,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           items: List.generate(
             2,
             (index) => BottomNavigationBarItem(
-              activeIcon: Icon(index == 0
-                    ? Icons.grid_view_rounded
-                    : Icons.shopping_cart_rounded,),
+                activeIcon: Icon(
+                  index == 0
+                      ? Icons.grid_view_rounded
+                      : Icons.shopping_cart_rounded,
+                ),
                 icon: Icon(index == 0
                     ? Icons.grid_view_outlined
                     : Icons.shopping_cart_outlined),

@@ -18,7 +18,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Carted Smokes",
-            style:  TextStyle(
+            style: TextStyle(
                 color: Colors.green,
                 fontWeight: FontWeight.w400,
                 fontSize: 24)),
@@ -33,29 +33,40 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             : Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(height: MediaQuery.sizeOf(context).height*0.54,
-                    child: SingleChildScrollView(child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children:List.generate(
-                      cartNotifier.productsInCart.length,
-                      (index) => CheckoutTile(
-                        onRemoved: () {
-                          cartNotifier.removeFromCart(
-                            cartNotifier.productsInCart[index],
-                          );
-                  
-                          setState(() {});
-                        },
-                        product: cartNotifier.productsInCart[index],
+                  SizedBox(
+                    height: MediaQuery.sizeOf(context).height * 0.64,
+                    child: SingleChildScrollView(
+                        child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        cartNotifier.productsInCart.length,
+                        (index) => CheckoutTile(
+                          onRemoved: () {
+                            cartNotifier.removeFromCart(
+                              cartNotifier.productsInCart[index],
+                            );
+
+                            setState(() {});
+                          },
+                          product: cartNotifier.productsInCart[index],
+                        ),
                       ),
-                    ),)),
+                    )),
                   ),
                   const Spacer(),
                   Row(
                     children: [
-                      const Text("Total Price",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600),),
+                      const Text(
+                        "Total Price",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
                       const Spacer(),
-                      Text("\$${cartNotifier.getTotalAmountInCart()}",style:const TextStyle(fontSize: 18,fontWeight: FontWeight.w600),)
+                      Text(
+                        "\$${cartNotifier.getTotalAmountInCart()}",
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w600),
+                      )
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -86,54 +97,68 @@ class CheckoutTile extends StatelessWidget {
   final VoidCallback onRemoved;
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
+    final screenHeight = MediaQuery.sizeOf(context).height;
 
-    return Column(
-      children: [
-        Row(mainAxisSize: MainAxisSize.min, children: [
-          Image.asset(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Column(
+        children: [
+          Image.network(
             product.imagePath,
-            width: screenWidth * .2,
+            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) =>
+                child,
+            loadingBuilder: (context, child, loadingProgress) {
+              return loadingProgress == null
+                  ? child
+                  : const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(),
+                    );
+            },
+            height: screenHeight * .2,
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.marketName,
+                    style: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(product.description),
+                ],
+              ),
+            ),
+            Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  product.marketName,
+                  "\$${product.amount}",
                   style: const TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
+                      fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 12),
-                Text(product.weight),
+                InkWell(
+                  onTap: onRemoved,
+                  child: const Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                  ),
+                )
               ],
-            ),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "\$${product.amount}",
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 12),
-              InkWell(
-                onTap: onRemoved,
-                child: const Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                ),
-              )
-            ],
-          )
-        ]),
-        const Divider()
-      ],
+            )
+          ]),
+          const Divider()
+        ],
+      ),
     );
   }
 }

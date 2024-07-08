@@ -10,49 +10,92 @@ class ProductsScreen extends StatefulWidget {
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
+  bool isLoading = false;
+  void fetch() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    await CartNotifier.instance.getProductsFromTimbu();
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      fetch();
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cartNotifier = CartNotifier.instance;
+    final errorOccured = cartNotifier.timbuResponse.errorMessage != null;
+
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Availables",
-            style:  TextStyle(
-                color: Colors.green,
-                fontWeight: FontWeight.w400,
-                fontSize: 24)),
-      ),
+      appBar: AppBar(centerTitle: true, title: const Text("Availables")),
       body: SafeArea(
-        child: GridView(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisSpacing: 4, crossAxisCount: 2, childAspectRatio: .56),
-          children: List.generate(
-            products.length,
-            (index) => Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: ProductCard(
-                product: products[index],
-              ),
-            ),
-          ),
-        ),
+        child: cartNotifier.timbuResponse.isLoading == true
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Visibility(
+                visible: errorOccured,
+                replacement: SingleChildScrollView(
+                  child: Column(children: [
+                    ...List.generate(
+                      cartNotifier.timbuResponse.products?.length ?? 1,
+                      (index) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: ProductTile(
+                          product:
+                              cartNotifier.timbuResponse.products?[index] ??
+                                  Product.empty(),
+                        ),
+                      ),
+                    ),
+                  ]),
+                ),
+                child: Center(
+                    child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Error Occurred:\n${cartNotifier.timbuResponse.errorMessage}",
+                      style: TextStyle(color: Colors.red.shade500),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      onPressed: fetch,
+                      child: const Text(
+                        "R E T R Y",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    )
+                  ],
+                ))),
       ),
     );
   }
 }
 
-class ProductCard extends StatefulWidget {
-  const ProductCard({
+class ProductTile extends StatefulWidget {
+  const ProductTile({
     required this.product,
     super.key,
   });
   final Product product;
 
   @override
-  State<ProductCard> createState() => _ProductCardState();
+  State<ProductTile> createState() => _ProductTileState();
 }
 
-class _ProductCardState extends State<ProductCard> {
+class _ProductTileState extends State<ProductTile> {
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
@@ -64,18 +107,30 @@ class _ProductCardState extends State<ProductCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            product.imagePath,
-            height: screenHeight * 0.24,
-            fit: BoxFit.cover,
-            width: double.infinity,
-          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Center(
+                  child: Image.network(
+                    product.imagePath,
+                    frameBuilder:
+                        (context, child, frame, wasSynchronouslyLoaded) =>
+                            child,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      return loadingProgress == null
+                          ? child
+                          : const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(),
+                            );
+                    },
+                    height: screenHeight * .2,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -87,12 +142,12 @@ class _ProductCardState extends State<ProductCard> {
                           fontSize: 16),
                     ),
                     const Spacer(),
-                    Text(product.weight)
+                    Text(product.isAvailable ? "In Stock" : "Out of Stock")
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  product.source,
+                  product.description,
                   style:
                       const TextStyle(fontSize: 12, color: Colors.lightGreen),
                 ),
@@ -113,7 +168,9 @@ class _ProductCardState extends State<ProductCard> {
                       child: Transform.flip(
                         flipX: true,
                         child: Icon(
-                          cartNotifier.productsInCart.contains(product)
+                          cartNotifier.productsInCart
+                                  .where((element) => element.id == product.id)
+                                  .isNotEmpty
                               ? Icons.shopping_cart
                               : Icons.shopping_cart_outlined,
                           color: Colors.green,

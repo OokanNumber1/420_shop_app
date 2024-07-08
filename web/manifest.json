@@ -1,6 +1,6 @@
 {
-    "name": "simple_shopping_app",
-    "short_name": "simple_shopping_app",
+    "name": "420 Shop",
+    "short_name": "420 Shop",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
