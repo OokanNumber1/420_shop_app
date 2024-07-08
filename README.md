@@ -12,7 +12,7 @@ This app fetches products from Timbu and displays the necessary data.
 
 [Appetize link](https://appetize.io/app/android/com.example.simple_shopping_app?device=pixel4&osVersion=11.0)
 
-[APK link](https://drive.google.com/file/d/1_9Ltfmi5vIKzPiXFFujmstdJCnKOjRqT/view?usp=drivesdk)
+[APK link](https://drive.google.com/file/d/1F2sqqQEay006vspBQ8K5kWYaJG6LPSQ7/view?usp=sharing)
 
 [Demo link](https://drive.google.com/file/d/1LVVsgk2avdK6jL3Ycj0oPK0u0OKQ2bAP/view?usp=drive_link)
 
